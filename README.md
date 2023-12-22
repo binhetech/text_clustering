@@ -40,7 +40,7 @@ sh run.sh &
 
 ```
 cd server
-uwsgi stop ../logs/uwsgi.pid
+uwsgi --stop ../logs/uwsgi.pid
 ```
 
 ### uwsgi服务重启
