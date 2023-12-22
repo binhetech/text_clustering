@@ -7,6 +7,7 @@
 # @Software: PyCharm
 import os
 import numpy as np
+import torch
 from sklearn.cluster import AgglomerativeClustering
 from sentence_transformers import SentenceTransformer
 
@@ -29,10 +30,13 @@ def call_clustering(cluster_ins, texts, embeddings):
 
 class TextClustering(object):
     def __init__(self, model_path='../models/text2vec-base-chinese'):
-        self.model = SentenceTransformer(model_path)
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        model = SentenceTransformer(model_path)
+        self.model = model.to(self.device)
         # distance_threshold越大，则簇数越少，每簇的样本数就越多
         self.cluster_ins = AgglomerativeClustering(n_clusters=None, affinity='cosine', linkage='complete',
                                                    distance_threshold=0.2)
+        print("init completed:{}".format(self.device))
 
     def get_embedding(self, sentences):
         # Our sentences we like to encode
@@ -42,7 +46,6 @@ class TextClustering(object):
 
         # Sentences are encoded by calling model.encode()
         embeddings = self.model.encode(sentences)
-        embeddings = embeddings.cpu()
         return embeddings
 
     def process(self, texts):
@@ -59,3 +62,8 @@ if __name__ == '__main__':
                                           distance_threshold=0.2)
     y = call_clustering(cluster_ins, texts, X)
     print(y)
+
+    tc = TextClustering()
+    texts = ["中国", "美国", "香蕉", "番茄", "苹果"]
+    output = tc.process(texts)
+    print(output)
