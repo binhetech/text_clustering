@@ -18,11 +18,12 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 def call_clustering(cluster_ins, texts, embeddings):
     clustering = cluster_ins.fit(embeddings)
     output = {}
-    for i, j in zip(texts, clustering.labels_):
+    for idx, (i, j) in enumerate(zip(texts, clustering.labels_)):
         j = str(j)
         if j not in output:
-            output[j] = {"label": j, "texts": []}
+            output[j] = {"label": j, "texts": [], "ids": []}
         output[j]["texts"].append(i)
+        output[j]["ids"].append(idx)
     output = sorted(output.values(), key=lambda x: int(x["label"]))
     # print("call_clustering:{}".format(len(output)))
     return output
