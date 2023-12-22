@@ -23,7 +23,7 @@ def call_clustering(cluster_ins, texts, embeddings):
         if j not in output:
             output[j] = {"label": j, "texts": []}
         output[j]["texts"].append(i)
-    output = sorted(output.items(), key=lambda x: int(x[0]))
+    output = sorted(output.values(), key=lambda x: int(x["label"]))
     # print("call_clustering:{}".format(len(output)))
     return output
 
